@@ -15,165 +15,224 @@ body {
   height: 100vh;
   -webkit-user-select: none;
   user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 #duck-container {
-  width: 120px;
-  height: 140px;
+  width: 80px;
+  height: 96px;
   position: relative;
-  cursor: pointer;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
 }
-#duck-svg {
+#duck-canvas {
   width: 100%;
   height: 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  border: none;
+  display: block;
 }
 #bubble {
   display: none;
   position: absolute;
-  top: -30px;
+  top: -28px;
   left: 50%;
   transform: translateX(-50%);
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 6px 12px;
-  font-size: 12px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 8px;
+  padding: 3px 8px;
+  font-size: 10px;
   white-space: nowrap;
   color: #333;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
   z-index: 10;
+  font-family: 'Courier New', monospace;
+  pointer-events: none;
 }
 #bubble::after {
   content: '';
   position: absolute;
-  bottom: -6px;
+  bottom: -5px;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
-  border-left: 6px solid transparent;
-  border-right: 6px solid transparent;
-  border-top: 6px solid white;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid rgba(255,255,255,0.95);
 }
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-5px); }
+#app-label {
+  position: absolute;
+  bottom: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.5);
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 8px;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  white-space: nowrap;
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
 }
-@keyframes blink {
-  0%, 90%, 100% { opacity: 1; }
-  95% { opacity: 0; }
+#mood-indicator {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  font-size: 10px;
+  pointer-events: none;
 }
-@keyframes shake {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-5deg); }
-  75% { transform: rotate(5deg); }
-}
-@keyframes bounce {
-  0%, 100% { transform: translateY(0) scale(1,1); }
-  30% { transform: translateY(-20px) scale(1,1); }
-  50% { transform: translateY(0) scale(1,1); }
-  70% { transform: translateY(-10px) scale(1,1); }
-  90% { transform: translateY(0) scale(1,1); }
-}
-@keyframes happy {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  25% { transform: rotate(-10deg) scale(1.1); }
-  75% { transform: rotate(10deg) scale(1.1); }
-}
-.float-anim { animation: float 3s ease-in-out infinite; }
-.shake-anim { animation: shake 0.5s ease-in-out; }
-.bounce-anim { animation: bounce 0.6s ease-out; }
-.happy-anim { animation: happy 0.4s ease-in-out 3; }
-#eye-left, #eye-right { animation: blink 3s ease-in-out infinite; }
 </style>
 </head>
 <body>
 <div id="duck-container">
   <div id="bubble"></div>
-  <svg id="duck-svg" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
-    <!-- 身体 -->
-    <ellipse cx="60" cy="100" rx="40" ry="32" fill="#FFD700" stroke="#E6BE00" stroke-width="1.5"/>
-    <!-- 肚子 -->
-    <ellipse cx="60" cy="106" rx="28" ry="22" fill="#FFE44D" opacity="0.7"/>
-    <!-- 左翅膀 -->
-    <ellipse id="wing-left" cx="28" cy="96" rx="14" ry="10" fill="#FFC107" stroke="#E6BE00" stroke-width="1" transform="rotate(-10, 28, 96)"/>
-    <!-- 右翅膀 -->
-    <ellipse id="wing-right" cx="92" cy="96" rx="14" ry="10" fill="#FFC107" stroke="#E6BE00" stroke-width="1" transform="rotate(10, 92, 96)"/>
-    <!-- 头 -->
-    <circle cx="60" cy="58" r="30" fill="#FFD700" stroke="#E6BE00" stroke-width="1.5"/>
-    <!-- 左眼白 -->
-    <circle cx="50" cy="52" r="8" fill="white" stroke="#333" stroke-width="0.8"/>
-    <!-- 右眼白 -->
-    <circle cx="70" cy="52" r="8" fill="white" stroke="#333" stroke-width="0.8"/>
-    <!-- 左眼珠 -->
-    <circle id="eye-left" cx="52" cy="52" r="5" fill="#333"/>
-    <!-- 右眼珠 -->
-    <circle id="eye-right" cx="72" cy="52" r="5" fill="#333"/>
-    <!-- 左眼高光 -->
-    <circle cx="50" cy="50" r="2" fill="white" opacity="0.8"/>
-    <!-- 右眼高光 -->
-    <circle cx="70" cy="50" r="2" fill="white" opacity="0.8"/>
-    <!-- 嘴巴 -->
-    <ellipse cx="60" cy="63" rx="10" ry="5" fill="#FF8C00" stroke="#E07B00" stroke-width="1"/>
-    <!-- 嘴巴上缝 -->
-    <line x1="52" y1="62" x2="68" y2="62" stroke="#E07B00" stroke-width="1" opacity="0.5"/>
-    <!-- 腮红左 -->
-    <ellipse cx="40" cy="62" rx="6" ry="4" fill="#FFB3B3" opacity="0.5"/>
-    <!-- 腮红右 -->
-    <ellipse cx="80" cy="62" rx="6" ry="4" fill="#FFB3B3" opacity="0.5"/>
-    <!-- 左脚 -->
-    <ellipse cx="45" cy="128" rx="10" ry="5" fill="#FF8C00" stroke="#E07B00" stroke-width="1"/>
-    <!-- 右脚 -->
-    <ellipse cx="75" cy="128" rx="10" ry="5" fill="#FF8C00" stroke="#E07B00" stroke-width="1"/>
-    <!-- 尾巴 -->
-    <ellipse cx="60" cy="75" rx="6" ry="4" fill="#FFC107" stroke="#E6BE00" stroke-width="0.5" transform="rotate(180, 60, 75)"/>
-  </svg>
+  <div id="mood-indicator"></div>
+  <canvas id="duck-canvas" width="80" height="96"></canvas>
+  <div id="app-label"></div>
 </div>
-
 <script>
-const container = document.getElementById('duck-container');
-const svg = document.getElementById('duck-svg');
-const bubble = document.getElementById('bubble');
-const messages = [
-  '嗨~', '摸摸', '好开心', '咕咕', '鸭鸭~',
-  '想你', '要亲亲', '抱抱~', '嘿嘿', '好耶'
+const PX = 4, GW = 20, GH = 24;
+const C = {0:null,1:'#FFD700',2:'#FFC107',3:'#FF8C00',4:'#FFE44D',5:'#333',6:'#FFF',7:'#FFB3B3',8:'#FF8C00',9:'#E6BE00'};
+
+const IDLE = [
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,5,5,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,6,5,3,3,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,3,3,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+ [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+ [0,0,1,1,1,4,4,4,4,4,4,4,4,1,1,1,1,0,0,0],
+ [0,0,1,1,1,4,4,4,4,4,4,4,4,1,1,1,1,0,0,0],
+ [0,0,0,1,1,1,4,4,4,4,4,4,1,1,1,1,0,0,0,0],
+ [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,8,8,0,0,0,8,8,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,8,8,0,0,0,8,8,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
 ];
 
-function handleClick() {
-  const msg = messages[Math.floor(Math.random() * messages.length)];
-  showBubble(msg);
-  svg.classList.remove('bounce-anim', 'happy-anim', 'shake-anim');
-  void svg.offsetWidth;
-  svg.classList.add('bounce-anim');
-  setTimeout(() => {
-    svg.classList.remove('bounce-anim');
-    svg.classList.add('happy-anim');
-  }, 600);
-}
+const HAPPY = [
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,5,5,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,7,5,3,3,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,3,3,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+ [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+ [0,0,1,1,1,4,4,4,4,4,4,4,4,1,1,1,1,0,0,0],
+ [0,0,1,1,1,4,4,4,4,4,4,4,4,1,1,1,1,0,0,0],
+ [0,0,0,1,1,1,4,4,4,4,4,4,1,1,1,1,0,0,0,0],
+ [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,8,8,0,0,0,8,8,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,8,8,0,0,0,8,8,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+];
 
-function showBubble(text) {
-  bubble.textContent = text;
-  bubble.style.display = 'block';
-  clearTimeout(bubble._timer);
-  bubble._timer = setTimeout(() => {
-    bubble.style.display = 'none';
-  }, 1500);
-}
+const SLEEP = [
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0],
+ [0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0],
+ [0,0,1,1,1,4,4,4,4,4,4,4,4,1,1,1,1,0,0,0],
+ [0,0,1,1,1,4,4,4,4,4,4,4,4,1,1,1,1,0,0,0],
+ [0,0,0,1,1,1,4,4,4,4,4,4,1,1,1,1,0,0,0,0],
+ [0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
+ [0,0,0,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,8,8,0,0,0,8,8,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,8,8,0,0,0,8,8,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+];
 
-// 定时随机动
-setInterval(() => {
-  const r = Math.random();
-  if (r < 0.4) {
-    svg.classList.remove('float-anim');
-    void svg.offsetWidth;
-    svg.classList.add('float-anim');
-  } else if (r < 0.7) {
-    const msgs = ['咕~', '鸭?', '~', '...'];
-    showBubble(msgs[Math.floor(Math.random() * msgs.length)]);
+const canvas = document.getElementById('duck-canvas');
+const ctx = canvas.getContext('2d');
+const bubble = document.getElementById('bubble');
+const moodIndicator = document.getElementById('mood-indicator');
+const appLabel = document.getElementById('app-label');
+
+let isSleeping = false, isHappy = false, happyTimer = 0;
+
+function drawDuck(pd) {
+  ctx.clearRect(0, 0, 80, 96);
+  for (let y = 0; y < GH; y++)
+    for (let x = 0; x < GW; x++) {
+      const c = pd[y][x];
+      if (c !== 0) { ctx.fillStyle = C[c]; ctx.fillRect(x*PX, y*PX, PX, PX); }
+    }
+}
+function getDuck() { return isSleeping ? SLEEP : isHappy ? HAPPY : IDLE; }
+function update() { drawDuck(getDuck()); }
+function bubble_(t) {
+  bubble.textContent = t; bubble.style.display = 'block';
+  clearTimeout(bubble._t); bubble._t = setTimeout(() => { bubble.style.display = 'none'; }, 2000);
+}
+function setAppLabel(t) {
+  if (t) { appLabel.textContent = t; appLabel.style.opacity = '1'; }
+  else { appLabel.style.opacity = '0'; }
+}
+function handleTap() {
+  if (isSleeping) {
+    isSleeping = false; isHappy = true; happyTimer = 40;
+    bubble_('嗯?醒了!'); moodIndicator.textContent = '😊'; update(); return;
   }
-}, 5000);
-
-// 暴露给Android
-window.handleClick = handleClick;
+  if (isHappy) bubble_(['嘿嘿','好开心~','摸摸!','鸭鸭!','抱抱~'][Math.floor(Math.random()*5)]);
+  else { bubble_(['呀!','咕!','吓一跳','嗯?','干嘛~'][Math.floor(Math.random()*5)]);
+    isHappy = true; happyTimer = 30; moodIndicator.textContent = '😊'; }
+  update();
+}
+window.handleTap = handleTap;
+window.setAppLabel = setAppLabel;
+window.setMood = function(m) { moodIndicator.textContent = m; };
+window.setSleeping = function(s) {
+  isSleeping = s; if (s) { isHappy = false; moodIndicator.textContent = '💤'; } update();
+};
+setInterval(() => {
+  if (happyTimer > 0) { happyTimer--; if (happyTimer === 0) { isHappy = false; moodIndicator.textContent = ''; update(); } }
+  if (!isHappy && !isSleeping && Math.random() < 0.3)
+    bubble_(['咕~','...','鸭?','~','...'][Math.floor(Math.random()*5)]);
+  if (!isHappy && !isSleeping && Math.random() < 0.15) update();
+}, 3000);
+update();
 </script>
 </body>
 </html>

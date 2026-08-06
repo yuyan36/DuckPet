@@ -4,16 +4,26 @@
     android:height="48dp"
     android:viewportWidth="48"
     android:viewportHeight="48">
-    <path
-        android:fillColor="#FFD700"
-        android:pathData="M24,4C14,4 6,12 6,22C6,32 14,40 24,40C34,40 42,32 42,22C42,12 34,4 24,4Z"/>
-    <path
-        android:fillColor="#FF8C00"
-        android:pathData="M18,26L30,26L24,32Z"/>
-    <path
-        android:fillColor="#333"
-        android:pathData="M15,18A3,3 0 1,1 21,18A3,3 0 1,1 15,18Z"/>
-    <path
-        android:fillColor="#333"
-        android:pathData="M27,18A3,3 0 1,1 33,18A3,3 0 1,1 27,18Z"/>
+    <!-- 像素风小黄鸭图标 -->
+    <!-- 黄色背景圆 -->
+    <path android:fillColor="#FFD700" android:pathData="M24,24m-22,0a22,22 0,1 1,44 0a22,22 0,1 1,-44 0"/>
+    <!-- 头部 -->
+    <path android:fillColor="#FFD700" android:pathData="M16,14l16,0l0,12l-16,0z"/>
+    <!-- 眼睛 -->
+    <path android:fillColor="#333333" android:pathData="M19,18l3,0l0,3l-3,0z"/>
+    <path android:fillColor="#333333" android:pathData="M26,18l3,0l0,3l-3,0z"/>
+    <!-- 眼白高光 -->
+    <path android:fillColor="#FFFFFF" android:pathData="M19,18l1,0l0,1l-1,0z"/>
+    <path android:fillColor="#FFFFFF" android:pathData="M26,18l1,0l0,1l-1,0z"/>
+    <!-- 嘴巴 -->
+    <path android:fillColor="#FF8C00" android:pathData="M21,24l6,0l0,2l-6,0z"/>
+    <path android:fillColor="#FF8C00" android:pathData="M21,24l0,2l-1,0l0,-2z"/>
+    <path android:fillColor="#FF8C00" android:pathData="M27,24l0,2l1,0l0,-2z"/>
+    <!-- 身体 -->
+    <path android:fillColor="#FFD700" android:pathData="M12,26l24,0l0,10l-24,0z"/>
+    <!-- 肚子 -->
+    <path android:fillColor="#FFE44D" android:pathData="M16,28l16,0l0,6l-16,0z"/>
+    <!-- 脚 -->
+    <path android:fillColor="#FF8C00" android:pathData="M16,36l4,0l0,3l-4,0z"/>
+    <path android:fillColor="#FF8C00" android:pathData="M28,36l4,0l0,3l-4,0z"/>
 </vector>
