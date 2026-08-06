@@ -1,0 +1,103 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.duckpet"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+11-->/home/duck-pet/app/src/main/AndroidManifest.xml:4:5-78
+11-->/home/duck-pet/app/src/main/AndroidManifest.xml:4:22-75
+12    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+12-->/home/duck-pet/app/src/main/AndroidManifest.xml:5:5-77
+12-->/home/duck-pet/app/src/main/AndroidManifest.xml:5:22-74
+13    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
+13-->/home/duck-pet/app/src/main/AndroidManifest.xml:6:5-89
+13-->/home/duck-pet/app/src/main/AndroidManifest.xml:6:22-86
+14    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+14-->/home/duck-pet/app/src/main/AndroidManifest.xml:7:5-77
+14-->/home/duck-pet/app/src/main/AndroidManifest.xml:7:22-74
+15
+16    <permission
+16-->[androidx.core:core:1.10.1] /root/.gradle/caches/transforms-3/ce8ec2a101a6edd6e6ec9cfdc068cd2a/transformed/core-1.10.1/AndroidManifest.xml:22:5-24:47
+17        android:name="com.duckpet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+17-->[androidx.core:core:1.10.1] /root/.gradle/caches/transforms-3/ce8ec2a101a6edd6e6ec9cfdc068cd2a/transformed/core-1.10.1/AndroidManifest.xml:23:9-81
+18        android:protectionLevel="signature" />
+18-->[androidx.core:core:1.10.1] /root/.gradle/caches/transforms-3/ce8ec2a101a6edd6e6ec9cfdc068cd2a/transformed/core-1.10.1/AndroidManifest.xml:24:9-44
+19
+20    <uses-permission android:name="com.duckpet.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+20-->[androidx.core:core:1.10.1] /root/.gradle/caches/transforms-3/ce8ec2a101a6edd6e6ec9cfdc068cd2a/transformed/core-1.10.1/AndroidManifest.xml:26:5-97
+20-->[androidx.core:core:1.10.1] /root/.gradle/caches/transforms-3/ce8ec2a101a6edd6e6ec9cfdc068cd2a/transformed/core-1.10.1/AndroidManifest.xml:26:22-94
+21
+22    <application
+22-->/home/duck-pet/app/src/main/AndroidManifest.xml:9:5-31:19
+23        android:allowBackup="true"
+23-->/home/duck-pet/app/src/main/AndroidManifest.xml:10:9-35
+24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+24-->[androidx.core:core:1.10.1] /root/.gradle/caches/transforms-3/ce8ec2a101a6edd6e6ec9cfdc068cd2a/transformed/core-1.10.1/AndroidManifest.xml:28:18-86
+25        android:debuggable="true"
+26        android:extractNativeLibs="false"
+27        android:icon="@mipmap/ic_launcher"
+27-->/home/duck-pet/app/src/main/AndroidManifest.xml:11:9-43
+28        android:label="小黄鸭桌宠"
+28-->/home/duck-pet/app/src/main/AndroidManifest.xml:12:9-30
+29        android:supportsRtl="true"
+29-->/home/duck-pet/app/src/main/AndroidManifest.xml:13:9-35
+30        android:theme="@style/Theme.DuckPet" >
+30-->/home/duck-pet/app/src/main/AndroidManifest.xml:14:9-45
+31        <activity
+31-->/home/duck-pet/app/src/main/AndroidManifest.xml:16:9-24:20
+32            android:name="com.duckpet.MainActivity"
+32-->/home/duck-pet/app/src/main/AndroidManifest.xml:17:13-41
+33            android:exported="true"
+33-->/home/duck-pet/app/src/main/AndroidManifest.xml:18:13-36
+34            android:theme="@style/Theme.DuckPet" >
+34-->/home/duck-pet/app/src/main/AndroidManifest.xml:19:13-49
+35            <intent-filter>
+35-->/home/duck-pet/app/src/main/AndroidManifest.xml:20:13-23:29
+36                <action android:name="android.intent.action.MAIN" />
+36-->/home/duck-pet/app/src/main/AndroidManifest.xml:21:17-69
+36-->/home/duck-pet/app/src/main/AndroidManifest.xml:21:25-66
+37
+38                <category android:name="android.intent.category.LAUNCHER" />
+38-->/home/duck-pet/app/src/main/AndroidManifest.xml:22:17-77
+38-->/home/duck-pet/app/src/main/AndroidManifest.xml:22:27-74
+39            </intent-filter>
+40        </activity>
+41
+42        <service
+42-->/home/duck-pet/app/src/main/AndroidManifest.xml:26:9-29:58
+43            android:name="com.duckpet.OverlayService"
+43-->/home/duck-pet/app/src/main/AndroidManifest.xml:27:13-43
+44            android:exported="false"
+44-->/home/duck-pet/app/src/main/AndroidManifest.xml:28:13-37
+45            android:foregroundServiceType="specialUse" />
+45-->/home/duck-pet/app/src/main/AndroidManifest.xml:29:13-55
+46
+47        <provider
+47-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:24:9-32:20
+48            android:name="androidx.startup.InitializationProvider"
+48-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:25:13-67
+49            android:authorities="com.duckpet.androidx-startup"
+49-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:26:13-68
+50            android:exported="false" >
+50-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:27:13-37
+51            <meta-data
+51-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:29:13-31:52
+52                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+52-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:30:17-75
+53                android:value="androidx.startup" />
+53-->[androidx.emoji2:emoji2:1.2.0] /root/.gradle/caches/transforms-3/4db5ad5fb22f3efbf09e4f9c90ad8cea/transformed/emoji2-1.2.0/AndroidManifest.xml:31:17-49
+54            <meta-data
+54-->[androidx.lifecycle:lifecycle-process:2.4.1] /root/.gradle/caches/transforms-3/36c94c741b78127cf4148bb833745312/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:31:13-33:52
+55                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+55-->[androidx.lifecycle:lifecycle-process:2.4.1] /root/.gradle/caches/transforms-3/36c94c741b78127cf4148bb833745312/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:32:17-78
+56                android:value="androidx.startup" />
+56-->[androidx.lifecycle:lifecycle-process:2.4.1] /root/.gradle/caches/transforms-3/36c94c741b78127cf4148bb833745312/transformed/lifecycle-process-2.4.1/AndroidManifest.xml:33:17-49
+57        </provider>
+58    </application>
+59
+60</manifest>
