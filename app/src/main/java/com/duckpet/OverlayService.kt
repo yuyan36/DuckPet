@@ -154,14 +154,9 @@ class OverlayService : Service() {
         try {
             params = WindowManager.LayoutParams(
                 overlayWidth, overlayHeight,
-                if (Build.VERSION.SDK_INT >= 26)
-                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-                else
-                    WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
-                    WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
                 PixelFormat.TRANSLUCENT
             ).apply {
                 gravity = Gravity.START or Gravity.TOP
@@ -177,11 +172,14 @@ class OverlayService : Service() {
                 settings.loadWithOverviewMode = true
                 settings.useWideViewPort = true
                 settings.domStorageEnabled = true
-                setLayerType(View.LAYER_TYPE_HARDWARE, null)
+                settings.cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
                 setOnTouchListener(overlayTouchListener)
                 webViewClient = object : WebViewClient() {
                     override fun onPageFinished(view: WebView, url: String) {
-                        super.onPageFinished(view, url)
+                        view.setBackgroundColor(0x00000000)
+                    }
+                    override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
+                        // 静默处理加载错误
                     }
                 }
                 addJavascriptInterface(DuckInterface(), "DuckInterface")
