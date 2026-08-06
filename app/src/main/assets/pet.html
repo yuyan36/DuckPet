@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: transparent;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  -webkit-user-select: none;
+  user-select: none;
+}
+#duck-container {
+  width: 120px;
+  height: 140px;
+  position: relative;
+  cursor: pointer;
+}
+#duck-svg {
+  width: 100%;
+  height: 100%;
+}
+#bubble {
+  display: none;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 12px;
+  white-space: nowrap;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  z-index: 10;
+}
+#bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid white;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-5px); }
+}
+@keyframes blink {
+  0%, 90%, 100% { opacity: 1; }
+  95% { opacity: 0; }
+}
+@keyframes shake {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) scale(1,1); }
+  30% { transform: translateY(-20px) scale(1,1); }
+  50% { transform: translateY(0) scale(1,1); }
+  70% { transform: translateY(-10px) scale(1,1); }
+  90% { transform: translateY(0) scale(1,1); }
+}
+@keyframes happy {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-10deg) scale(1.1); }
+  75% { transform: rotate(10deg) scale(1.1); }
+}
+.float-anim { animation: float 3s ease-in-out infinite; }
+.shake-anim { animation: shake 0.5s ease-in-out; }
+.bounce-anim { animation: bounce 0.6s ease-out; }
+.happy-anim { animation: happy 0.4s ease-in-out 3; }
+#eye-left, #eye-right { animation: blink 3s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div id="duck-container">
+  <div id="bubble"></div>
+  <svg id="duck-svg" viewBox="0 0 120 140" xmlns="http://www.w3.org/2000/svg">
+    <!-- 身体 -->
+    <ellipse cx="60" cy="100" rx="40" ry="32" fill="#FFD700" stroke="#E6BE00" stroke-width="1.5"/>
+    <!-- 肚子 -->
+    <ellipse cx="60" cy="106" rx="28" ry="22" fill="#FFE44D" opacity="0.7"/>
+    <!-- 左翅膀 -->
+    <ellipse id="wing-left" cx="28" cy="96" rx="14" ry="10" fill="#FFC107" stroke="#E6BE00" stroke-width="1" transform="rotate(-10, 28, 96)"/>
+    <!-- 右翅膀 -->
+    <ellipse id="wing-right" cx="92" cy="96" rx="14" ry="10" fill="#FFC107" stroke="#E6BE00" stroke-width="1" transform="rotate(10, 92, 96)"/>
+    <!-- 头 -->
+    <circle cx="60" cy="58" r="30" fill="#FFD700" stroke="#E6BE00" stroke-width="1.5"/>
+    <!-- 左眼白 -->
+    <circle cx="50" cy="52" r="8" fill="white" stroke="#333" stroke-width="0.8"/>
+    <!-- 右眼白 -->
+    <circle cx="70" cy="52" r="8" fill="white" stroke="#333" stroke-width="0.8"/>
+    <!-- 左眼珠 -->
+    <circle id="eye-left" cx="52" cy="52" r="5" fill="#333"/>
+    <!-- 右眼珠 -->
+    <circle id="eye-right" cx="72" cy="52" r="5" fill="#333"/>
+    <!-- 左眼高光 -->
+    <circle cx="50" cy="50" r="2" fill="white" opacity="0.8"/>
+    <!-- 右眼高光 -->
+    <circle cx="70" cy="50" r="2" fill="white" opacity="0.8"/>
+    <!-- 嘴巴 -->
+    <ellipse cx="60" cy="63" rx="10" ry="5" fill="#FF8C00" stroke="#E07B00" stroke-width="1"/>
+    <!-- 嘴巴上缝 -->
+    <line x1="52" y1="62" x2="68" y2="62" stroke="#E07B00" stroke-width="1" opacity="0.5"/>
+    <!-- 腮红左 -->
+    <ellipse cx="40" cy="62" rx="6" ry="4" fill="#FFB3B3" opacity="0.5"/>
+    <!-- 腮红右 -->
+    <ellipse cx="80" cy="62" rx="6" ry="4" fill="#FFB3B3" opacity="0.5"/>
+    <!-- 左脚 -->
+    <ellipse cx="45" cy="128" rx="10" ry="5" fill="#FF8C00" stroke="#E07B00" stroke-width="1"/>
+    <!-- 右脚 -->
+    <ellipse cx="75" cy="128" rx="10" ry="5" fill="#FF8C00" stroke="#E07B00" stroke-width="1"/>
+    <!-- 尾巴 -->
+    <ellipse cx="60" cy="75" rx="6" ry="4" fill="#FFC107" stroke="#E6BE00" stroke-width="0.5" transform="rotate(180, 60, 75)"/>
+  </svg>
+</div>
+
+<script>
+const container = document.getElementById('duck-container');
+const svg = document.getElementById('duck-svg');
+const bubble = document.getElementById('bubble');
+const messages = [
+  '嗨~', '摸摸', '好开心', '咕咕', '鸭鸭~',
+  '想你', '要亲亲', '抱抱~', '嘿嘿', '好耶'
+];
+
+function handleClick() {
+  const msg = messages[Math.floor(Math.random() * messages.length)];
+  showBubble(msg);
+  svg.classList.remove('bounce-anim', 'happy-anim', 'shake-anim');
+  void svg.offsetWidth;
+  svg.classList.add('bounce-anim');
+  setTimeout(() => {
+    svg.classList.remove('bounce-anim');
+    svg.classList.add('happy-anim');
+  }, 600);
+}
+
+function showBubble(text) {
+  bubble.textContent = text;
+  bubble.style.display = 'block';
+  clearTimeout(bubble._timer);
+  bubble._timer = setTimeout(() => {
+    bubble.style.display = 'none';
+  }, 1500);
+}
+
+// 定时随机动
+setInterval(() => {
+  const r = Math.random();
+  if (r < 0.4) {
+    svg.classList.remove('float-anim');
+    void svg.offsetWidth;
+    svg.classList.add('float-anim');
+  } else if (r < 0.7) {
+    const msgs = ['咕~', '鸭?', '~', '...'];
+    showBubble(msgs[Math.floor(Math.random() * msgs.length)]);
+  }
+}, 5000);
+
+// 暴露给Android
+window.handleClick = handleClick;
+</script>
+</body>
+</html>
