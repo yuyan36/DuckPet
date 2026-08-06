@@ -8,13 +8,11 @@ import android.app.Service
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
-import android.provider.Settings
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -34,8 +32,6 @@ class OverlayService : Service() {
     private var initialTouchX = 0f
     private var initialTouchY = 0f
     private var isDragging = false
-    private var isSnapped = false
-    private var snapEdge = "none"
     private val handler = Handler(Looper.getMainLooper())
     private var appCheckRunnable: Runnable? = null
 
@@ -43,7 +39,6 @@ class OverlayService : Service() {
     private val screenWidth by lazy { resources.displayMetrics.widthPixels }
     private val screenHeight by lazy { resources.displayMetrics.heightPixels }
 
-    // 悬浮窗大小 - 像素风小鸭变小了
     private val overlayWidth = (80 * density).toInt()
     private val overlayHeight = (96 * density).toInt()
 
@@ -57,9 +52,12 @@ class OverlayService : Service() {
         try {
             val notification = createNotification()
             startForeground(1, notification)
-            if (webView == null) createOverlay()
+            if (webView == null) {
+                createOverlay()
+            }
             startAppDetection()
         } catch (e: Exception) {
+            e.printStackTrace()
             stopSelf()
         }
         return START_STICKY
@@ -71,8 +69,9 @@ class OverlayService : Service() {
         appCheckRunnable?.let { handler.removeCallbacks(it) }
         try {
             webView?.let { v ->
-                if (Build.VERSION.SDK_INT < 19 || v.isAttachedToWindow)
+                if (v.isAttachedToWindow) {
                     windowManager.removeView(v)
+                }
             }
         } catch (_: Exception) {}
         webView = null
@@ -81,30 +80,38 @@ class OverlayService : Service() {
 
     private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val ch = NotificationChannel("duck_pet_channel", "小黄鸭桌宠",
-                NotificationManager.IMPORTANCE_LOW)
+            val ch = NotificationChannel(
+                "duck_pet_channel",
+                "涂鸦叽",
+                NotificationManager.IMPORTANCE_LOW
+            )
             ch.setShowBadge(false)
-            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannel(ch)
+            (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
+                .createNotificationChannel(ch)
         }
     }
 
     private fun createNotification(): Notification {
-        val pi = PendingIntent.getActivity(this, 0,
+        val pi = PendingIntent.getActivity(
+            this, 0,
             Intent(this, MainActivity::class.java),
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        return if (Build.VERSION.SDK_INT >= 26)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        val builder = if (Build.VERSION.SDK_INT >= 26) {
             Notification.Builder(this, "duck_pet_channel")
-                .setContentTitle("小黄鸭桌宠").setContentText("小黄鸭正在屏幕上陪着你")
-                .setSmallIcon(android.R.drawable.ic_menu_compass)
-                .setContentIntent(pi).setOngoing(true).build()
-        else
+        } else {
+            @Suppress("DEPRECATION")
             Notification.Builder(this)
-                .setContentTitle("小黄鸭桌宠").setContentText("小黄鸭正在屏幕上陪着你")
-                .setSmallIcon(android.R.drawable.ic_menu_compass)
-                .setContentIntent(pi).setOngoing(true).build()
+        }
+        return builder
+            .setContentTitle("涂鸦叽")
+            .setContentText("涂鸦叽正在屏幕上陪着你呢~")
+            .setSmallIcon(android.R.drawable.ic_menu_compass)
+            .setContentIntent(pi)
+            .setOngoing(true)
+            .build()
     }
 
-    // ========== APP检测 ==========
     private fun startAppDetection() {
         appCheckRunnable = object : Runnable {
             override fun run() {
@@ -120,7 +127,11 @@ class OverlayService : Service() {
             val usm = getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
             val cal = Calendar.getInstance()
             cal.add(Calendar.MINUTE, -1)
-            val stats = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, cal.timeInMillis, System.currentTimeMillis())
+            val stats = usm.queryUsageStats(
+                UsageStatsManager.INTERVAL_DAILY,
+                cal.timeInMillis,
+                System.currentTimeMillis()
+            )
             if (stats.isNullOrEmpty()) return
 
             var topApp = ""
@@ -137,69 +148,81 @@ class OverlayService : Service() {
                 val pm = packageManager
                 val ai = pm.getApplicationInfo(topApp, 0)
                 pm.getApplicationLabel(ai).toString()
-            } catch (_: Exception) { topApp }
+            } catch (_: Exception) {
+                topApp
+            }
 
-            webView?.evaluateJavascript("javascript:setAppLabel('$appName')", null)
+            val safeName = appName.replace("'", "\\'")
+            webView?.evaluateJavascript(
+                "javascript:setAppLabel('$safeName')",
+                null
+            )
         } catch (_: Exception) {}
     }
 
-    // ========== JavaScript 接口 ==========
     inner class DuckInterface {
         @JavascriptInterface
         fun onTap() {}
     }
 
-    // ========== 创建悬浮窗 ==========
     private fun createOverlay() {
-        try {
-            params = WindowManager.LayoutParams(
-                overlayWidth, overlayHeight,
-                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
-                PixelFormat.TRANSLUCENT
-            ).apply {
-                gravity = Gravity.START or Gravity.TOP
-                x = 50; y = screenHeight / 3
-            }
+        params = WindowManager.LayoutParams(
+            overlayWidth,
+            overlayHeight,
+            if (Build.VERSION.SDK_INT >= 26)
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            else
+                @Suppress("DEPRECATION")
+                WindowManager.LayoutParams.TYPE_PHONE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL or
+                WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+            PixelFormat.TRANSLUCENT
+        ).apply {
+            gravity = Gravity.START or Gravity.TOP
+            x = (screenWidth - overlayWidth) / 2
+            y = screenHeight / 4
+        }
 
-            val wv = WebView(this).apply {
-                setBackgroundColor(0x00000000)
-                isHorizontalScrollBarEnabled = false
-                isVerticalScrollBarEnabled = false
-                settings.javaScriptEnabled = true
-                settings.allowFileAccess = true
-                settings.loadWithOverviewMode = true
-                settings.useWideViewPort = true
-                settings.domStorageEnabled = true
-                settings.cacheMode = android.webkit.WebSettings.LOAD_NO_CACHE
-                setOnTouchListener(overlayTouchListener)
-                webViewClient = object : WebViewClient() {
-                    override fun onPageFinished(view: WebView, url: String) {
-                        view.setBackgroundColor(0x00000000)
-                    }
-                    override fun onReceivedError(view: WebView, errorCode: Int, description: String, failingUrl: String) {
-                        // 静默处理加载错误
-                    }
+        val wv = WebView(this).apply {
+            setBackgroundColor(0x00000000)
+            setLayerType(View.LAYER_TYPE_HARDWARE, null)
+            isHorizontalScrollBarEnabled = false
+            isVerticalScrollBarEnabled = false
+            settings.javaScriptEnabled = true
+            settings.allowFileAccess = true
+            settings.loadWithOverviewMode = true
+            settings.useWideViewPort = true
+            settings.domStorageEnabled = true
+            settings.mediaPlaybackRequiresUserGesture = false
+            addJavascriptInterface(DuckInterface(), "DuckInterface")
+            setOnTouchListener(overlayTouchListener)
+            webViewClient = object : WebViewClient() {
+                override fun onPageFinished(view: WebView, url: String) {
+                    super.onPageFinished(view, url)
                 }
-                addJavascriptInterface(DuckInterface(), "DuckInterface")
-                loadUrl("file:///android_asset/pet.html")
             }
+            loadUrl("file:///android_asset/pet.html")
+        }
 
+        try {
             windowManager.addView(wv, params)
             webView = wv
         } catch (e: Exception) {
+            e.printStackTrace()
             stopSelf()
         }
     }
 
-    // ========== 触摸 + 边缘吸附 ==========
     private val overlayTouchListener = View.OnTouchListener { v, event ->
         val p = params ?: return@OnTouchListener false
         when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                initialX = p.x; initialY = p.y
-                initialTouchX = event.rawX; initialTouchY = event.rawY
+                initialX = p.x
+                initialY = p.y
+                initialTouchX = event.rawX
+                initialTouchY = event.rawY
                 isDragging = false
                 false
             }
@@ -208,20 +231,18 @@ class OverlayService : Service() {
                 val dy = (event.rawY - initialTouchY).toInt()
                 if (kotlin.math.abs(dx) > 8 || kotlin.math.abs(dy) > 8) {
                     isDragging = true
-                    isSnapped = false
                     p.x = initialX + dx
                     p.y = initialY + dy
-                    try { windowManager.updateViewLayout(v, p) }
-                    catch (_: Exception) {}
+                    try {
+                        windowManager.updateViewLayout(v, p)
+                    } catch (_: Exception) {}
                 }
                 true
             }
             MotionEvent.ACTION_UP -> {
                 if (!isDragging) {
-                    // 点击 -> 通知WebView
                     webView?.evaluateJavascript("javascript:handleTap()", null)
                 } else {
-                    // 拖拽结束 -> 边缘吸附
                     snapToEdge(p)
                 }
                 true
@@ -231,39 +252,23 @@ class OverlayService : Service() {
     }
 
     private fun snapToEdge(p: WindowManager.LayoutParams) {
-        val snapThreshold = (60 * density).toInt()
-        val halfW = overlayWidth / 2
-        val halfH = overlayHeight / 2
-
-        // 检测距离哪个边缘最近
+        val snapThreshold = (80 * density).toInt()
         val distLeft = p.x
         val distRight = screenWidth - (p.x + overlayWidth)
         val distTop = p.y
         val distBottom = screenHeight - (p.y + overlayHeight)
 
         val minDist = minOf(distLeft, distRight, distTop, distBottom)
-        if (minDist > snapThreshold) return // 不在边缘附近
+        if (minDist > snapThreshold) return
 
-        isSnapped = true
         when (minDist) {
-            distLeft -> {
-                p.x = 0
-                snapEdge = "left"
-            }
-            distRight -> {
-                p.x = screenWidth - overlayWidth
-                snapEdge = "right"
-            }
-            distTop -> {
-                p.y = 0
-                snapEdge = "top"
-            }
-            distBottom -> {
-                p.y = screenHeight - overlayHeight
-                snapEdge = "bottom"
-            }
+            distLeft -> p.x = 0
+            distRight -> p.x = screenWidth - overlayWidth
+            distTop -> p.y = 0
+            distBottom -> p.y = screenHeight - overlayHeight
         }
-        try { windowManager.updateViewLayout(webView, p) }
-        catch (_: Exception) {}
+        try {
+            windowManager.updateViewLayout(webView, p)
+        } catch (_: Exception) {}
     }
 }
